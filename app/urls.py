@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import SponsorCreatreAPIview, SponsorListAPIview,SponsorUpdateAPIview
-from .views import StudentSponsorCreatreAPIview, StudentListAPIview, StudentUpdateAPIview,StudentRetrieveUpdateAPIView
+from .views import StudentSponsorCreatreAPIview, StudentListAPIview, StudentUpdateAPIview,StudentRetrieveUpdateAPIView, StatisticsAPIVeiw
 urlpatterns = [
     path('sponsor-list/', SponsorListAPIview.as_view()),
     path('sponsor-create/', SponsorCreatreAPIview.as_view()),
@@ -11,5 +11,7 @@ urlpatterns = [
     path('student-create/', StudentSponsorCreatreAPIview.as_view()),
     path('student-update/<int:pk>', StudentUpdateAPIview.as_view()),
 
-    path('student-sponsor-create/', StudentSponsorCreatreAPIview.as_view())
+    path('student-sponsor-create/', StudentSponsorCreatreAPIview.as_view()),
+
+    path('amount-statistic', StatisticsAPIVeiw.as_view()),
 ]

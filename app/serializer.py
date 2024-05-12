@@ -9,7 +9,11 @@ class SponsorSerializer(ModelSerializer):
 
     class Meta:
         model = Sponsor
-        exclude = ('organization','updated_at','sponsor_type' )
+        exclude = (
+            'organization',
+            'updated_at',
+            'sponsor_type'
+              )
 
 class StudentSerializer(ModelSerializer):
     unversity = serializers.StringRelatedField(source='unversity.title')
@@ -21,7 +25,10 @@ class StudentSerializer(ModelSerializer):
     
     class Meta:
         model = Student
-        exclude = ('created_at','updated_at', 'phone' )
+        exclude = ('created_at',
+                   'updated_at', 
+                   'phone' 
+                   )
 
          
 
@@ -35,24 +42,37 @@ class StudentDetailSerializer(ModelSerializer):
     
     class Meta:
         model = Student
-        exclude = ('created_at','updated_at' )
+        exclude = ('created_at',
+                   'updated_at' 
+                   )
 
 class StudentSponsorSerializer(ModelSerializer):
     
     class Meta:
         model = StudentSponsor
-        fields = ('id', 'student','sponsor','amount')
+        fields = ('id', 
+                  'student',
+                  'sponsor',
+                  'amount'
+                  )
     def validate(self, attrs):
         amount = attrs.get('amount')
         sponsor = attrs.get('sponsor')
         student = attrs.get('student')
-        from django.db.models import Sum
+        
         student_paid_money = student.all_data.all().aggregate(total_amount=Sum('amount'))['total_amount'] or 0
         if student.contract_amount - student_paid_money < amount:
-            raise serializers.ValidationError(detail={'error': f'siz {student.contract_amount - student_paid_money} ortiqcha to\'ladiz '})
+            raise serializers.ValidationError(
+                detail={
+                    'error': f'siz {student.contract_amount - student_paid_money} ortiqcha to\'ladiz '
+                    })
+        
         sponsor_paid_money = sponsor.all_data.all().aggregate(total_amount=Sum('amount'))['total_amount'] or 0
         if sponsor.sum - sponsor_paid_money  < amount:
-            raise serializers.ValidationError(detail={'error': f'sizda {sponsor_paid_money - sponsor.sum} bor holis'})
+            raise serializers.ValidationError(
+                detail={
+                    'error': f'sizda {sponsor_paid_money - sponsor.sum} bor holis'
+                    })
 
         return super().validate(attrs)
 
