@@ -6,6 +6,7 @@ from rest_framework.generics import CreateAPIView, UpdateAPIView,ListAPIView, De
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 from django.db.models import Sum
+from datetime import datetime
 
 
 
@@ -66,4 +67,25 @@ class StatisticsAPIVeiw(APIView):
         )
 
 class graphAPIView(APIView):
-    ...
+    
+    def get(self, request):
+        this_year = datetime.now().year
+        result = []
+
+        for i in range(1,13):
+            spomsor_amount = Sponsor.objects.filter(
+                created_at__month = i,
+                created_at__year = this_year,
+                conditions = 'tasdiqlangan'
+            ).aggregate(total=Sum('sum'))['total'] or 0
+
+            student_amout = Student.objects.filter(
+                created_at__month = i,
+                created_at__year = this_year
+            ).aggregate(total=Sum('contract_amount'))['total'] or 0
+            result.append({
+                'month': i,
+                'spomsor_amount':spomsor_amount,
+                'student_amout':student_amout,
+            })
+        return Response(result)
